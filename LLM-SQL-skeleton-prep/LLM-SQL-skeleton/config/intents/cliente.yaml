@@ -1,0 +1,167 @@
+namespace: clientes
+
+listar_clientes:
+  enabled: true
+  descricao: "Lista clientes com dados-chave (classificação, ramo, ocupação, rota, vendedor), priorizando os mais recentes."
+  exemplos:
+    # gerais / últimos/primeiros
+    - "traga os últimos 150 clientes"
+    - "listar últimos 100 clientes"
+    - "mostrar os últimos 50 clientes cadastrados"
+    - "clientes mais recentes"
+    - "últimos clientes cadastrados"
+    - "listar primeiros 20 clientes"
+    - "mostrar clientes mais antigos"
+    # período
+    - "clientes incluídos hoje"
+    - "clientes de ontem"
+    - "clientes desta semana"
+    - "clientes cadastrados na semana passada"
+    - "clientes incluídos este mês"
+    - "clientes no mês passado"
+    - "clientes desde 01/01/2024 até 31/01/2024"
+    # filtros por igualdade
+    - "clientes da classificação 10"
+    - "clientes por vendedor 5"
+    - "clientes da rota 2"
+    - "clientes do ramo 7"
+    - "clientes da ocupação 3"
+    - "clientes do tipo PF"
+    - "clientes do tipo PJ"
+    - "clientes do sexo masculino"
+    - "clientes do sexo feminino"
+    - "clientes ativos"
+    - "clientes bloqueados"
+    - "clientes consumidor final"
+    - "clientes do simples nacional"
+    - "clientes estrangeiros"
+    # buscas parciais
+    - "clientes com nome parecido com 'maria'"
+    - "clientes com fantasia contendo 'comercial'"
+    - "clientes com e-mail terminando em gmail"
+    # listas (IN)
+    - "clientes das classificações 1,2,3"
+    - "clientes dos vendedores 10 12 15"
+  slots_obrigatorios: []
+  slots_opcionais:
+    - N
+    - data_ini
+    - data_fim
+    - cliente
+    - classificacao
+    - classificação
+    - ramo
+    - ocupacao
+    - ocupação
+    - rota
+    - vendedor
+    - motivo_bloqueio
+    - tipo
+    - sexo
+    - ativo
+    - bloqueado
+    - consumidor
+    - simples
+    - estrangeiro
+    - documento
+    - nome_like
+    - fantasia_like
+    - email_like
+    - classificacoes
+    - vendedores
+
+  tabela_principal: "mgcli01010"
+  alias_principal: "cli"
+
+  joins:
+    - { tabela: "mgcla01010", alias: "cla", tipo: "LEFT", "on": "cla.NU_CLA = cli.NU_CLA" }
+    - { tabela: "mgram01010", alias: "ram", tipo: "LEFT", "on": "ram.NU_RAM = cli.NU_RAM" }
+    - { tabela: "mgocu01010", alias: "ocu", tipo: "LEFT", "on": "ocu.NU_OCU = cli.NU_OCU" }
+    - { tabela: "mgrot01010", alias: "rot", tipo: "LEFT", "on": "rot.NU_ROT = cli.NU_ROT" }
+    - { tabela: "mgvdr01010", alias: "vdr", tipo: "LEFT", "on": "vdr.NU_VDR = cli.NU_VDR" }
+    - { tabela: "mgres01010", alias: "res", tipo: "LEFT", "on": "res.NU_RES = cli.NU_RES" }
+
+  colunas:
+    numero_cliente: "cli.NU_CLI"
+    nome: "cli.DS_CLI"
+    fantasia: "cli.APEL_FANT"
+    tipo: "cli.TP_CLI"
+    documento: "cli.NU_CPF_CNPJ"
+    rg_ie: "cli.NU_RG_IE"
+    data_nascimento: "cli.DT_NASCTO"
+    sexo: "cli.ID_SEXO"
+    email: "cli.DS_EMAIL"
+    site: "cli.DS_SITE"
+    ativo: "cli.ID_ATIVO"
+    bloqueado: "cli.ID_BLOQ"
+    motivo_bloqueio: "cli.NU_RES"
+    motivo_bloqueio_descricao: "res.DS_RES"      # << ADD
+    classificação_codigo: "cli.NU_CLA"
+    classificação_descricao: "cla.DS_CLA"
+    ramo_codigo: "cli.NU_RAM"
+    ramo_descricao: "ram.DS_RAM"
+    ocupacao_codigo: "cli.NU_OCU"
+    ocupacao_descricao: "ocu.DS_OCU"
+    rota_codigo: "cli.NU_ROT"
+    rota_descricao: "rot.DS_ROT"
+    vendedor_codigo: "cli.NU_VDR"
+    vendedor_nome: "vdr.NOM_VDR"
+    contato: "cli.DS_CONT"
+    observacao: "cli.DS_OBS"
+    limite_credito: "cli.LMT_CRED"
+    data_inclusao: "cli.DT_INS"
+    consumidor_final: "cli.ID_CONSUMIDOR"
+    simples_nacional: "cli.ID_SIMPLES"
+    estrangeiro: "cli.ID_ESTRANGEIRO"
+
+  # modo de retorno (aceitos: linhas, agregado_tabela, agregado_unico)
+  retorna: "linhas"
+
+  filtros:
+    # período padrão em data de inclusão
+    periodo_em: "cli.DT_INS"
+
+  filtros_plus:
+    equals:
+      # aceitam numérico/booleano; string "sim/não" vira booleano
+      cliente: "cli.NU_CLI"
+      classificacao: "cli.NU_CLA"
+      classificação: "cli.NU_CLA"
+      ramo: "cli.NU_RAM"
+      ocupacao: "cli.NU_OCU"
+      ocupação: "cli.NU_OCU"
+      rota: "cli.NU_ROT"
+      vendedor: "cli.NU_VDR"
+      motivo_bloqueio: "cli.NU_RES"
+      tipo: "cli.TP_CLI"               # "PF", "PJ" ou código
+      sexo: "cli.ID_SEXO"              # "M", "F", "I" ou código
+      ativo: "cli.ID_ATIVO"            # sim/não, 1/0
+      bloqueado: "cli.ID_BLOQ"         # sim/não, 1/0
+      consumidor: "cli.ID_CONSUMIDOR"  # sim/não, 1/0
+      simples: "cli.ID_SIMPLES"        # sim/não, 1/0
+      estrangeiro: "cli.ID_ESTRANGEIRO" # sim/não, 1/0
+      documento: "cli.NU_CPF_CNPJ"
+    like:
+      nome_like: "cli.DS_CLI"
+      fantasia_like: "cli.APEL_FANT"
+      email_like: "cli.DS_EMAIL"
+    in:
+      classificacoes: "cli.NU_CLA"
+      vendedores: "cli.NU_VDR"
+
+  ordenacao:
+    # ordem padrão
+    por: ["cli.DT_INS DESC"]
+    # colunas liberadas para ORDER BY (evita erro se usuário pedir nome/numero)
+    allowed: ["cli.DT_INS", "cli.DS_CLI", "cli.NU_CLI"]
+
+  regras:
+    obrigar_limit_em_listas: true
+    limit_padrao: 100
+    exigir_indice_em: ["NU_CLI","NU_CLA","NU_RAM","NU_OCU","NU_ROT","NU_VDR","NU_RES","DT_INS"]
+    reconhecer_todos_sem_limit: true   # << NOVO
+
+  politicas:
+    mask:
+      documento: "cpf"
+      email: "email"

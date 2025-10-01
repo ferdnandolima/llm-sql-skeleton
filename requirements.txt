@@ -1,0 +1,9 @@
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+pydantic==2.7.1
+PyYAML==6.0.1
+pymysql==1.1.1
+sqlparse==0.5.1
+python-dotenv>=1.0
+ollama>=0.3.0
+requests>=2.31.0

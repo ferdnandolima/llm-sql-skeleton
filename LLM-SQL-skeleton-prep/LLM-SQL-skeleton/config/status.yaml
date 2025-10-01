@@ -1,0 +1,122 @@
+# config/dominios/status.yaml
+versao: 1
+fonte: "Status.xlsx (usuario)"
+
+dominios:
+  pedido_venda:
+    - { codigo: 0, rotulo: "Orcamento" }
+    - { codigo: 1, rotulo: "Aberto" }
+    - { codigo: 2, rotulo: "Pendente" }
+    - { codigo: 3, rotulo: "Separado" }
+    - { codigo: 4, rotulo: "Finalizado" }
+    - { codigo: 6, rotulo: "Cancelado" }
+    - { codigo: 7, rotulo: "Liberado" }
+    - { codigo: 8, rotulo: "Em producao" }
+    - { codigo: 9, rotulo: "Pendente de liberacao financeira" }
+
+  status_titulo:
+    - { codigo: 1, rotulo: "Dinheiro" }
+    - { codigo: 2, rotulo: "Cheque" }
+    - { codigo: 3, rotulo: "Cartao" }
+    - { codigo: 4, rotulo: "Saldo" }
+    - { codigo: 5, rotulo: "Outros" }
+    - { codigo: 6, rotulo: "Boleto" }
+    - { codigo: 7, rotulo: "Deposito" }
+    - { codigo: 8, rotulo: "Duplicata" }
+    - { codigo: 9, rotulo: "Saldo outro cliente" }
+
+  status_cheque:
+    - { codigo: 0, rotulo: "Caixa" }
+    - { codigo: 1, rotulo: "Financeiro" }
+    - { codigo: 2, rotulo: "Devolvido pendente" }
+    - { codigo: 3, rotulo: "Devolvido pago" }
+    - { codigo: 4, rotulo: "A liquidar" }
+    - { codigo: 5, rotulo: "Liquidado" }
+    - { codigo: 6, rotulo: "Repassado" }
+ 
+  status_romaneio:
+    - { codigo: 1, rotulo: "Pre-romaneio" }
+    - { codigo: 2, rotulo: "Romaneio" }
+    - { codigo: 3, rotulo: "Arquivo pendente" }
+    - { codigo: 4, rotulo: "Arquivo aceito" }
+
+  status_boleto:
+    - { codigo: 0, rotulo: "Caixa" }
+    - { codigo: 1, rotulo: "Financeiro" }
+    - { codigo: 2, rotulo: "Devolvido pendente" }
+    - { codigo: 3, rotulo: "Devolvido pago" }
+    - { codigo: 4, rotulo: "A liquidar" }
+    - { codigo: 5, rotulo: "Liquidado" }
+    - { codigo: 7, rotulo: "Estornado" }
+
+  tipo_titulo:
+    - { codigo: 1, rotulo: "Receita" }
+    - { codigo: 2, rotulo: "Despesa" }
+
+  status_pedido_compra:
+    - { codigo: 1, rotulo: "Gerado" }
+    - { codigo: 2, rotulo: "Parcial" }
+    - { codigo: 3, rotulo: "Cancelado" }
+    - { codigo: 4, rotulo: "Finalizado" }
+
+  tipo/especie_dsf:
+    - { codigo: 0, rotulo: "Cheque" }
+    - { codigo: 1, rotulo: "Duplicata" }
+    - { codigo: 2, rotulo: "Dinheiro" }
+    - { codigo: 3, rotulo: "Cartao" }
+    - { codigo: 4, rotulo: "boleto" }
+
+  status_of:
+    - { codigo: 1, rotulo: "Digitado" }
+    - { codigo: 2, rotulo: "Aberto" }
+    - { codigo: 3, rotulo: "Produzido" }
+    - { codigo: 4, rotulo: "Expedido" }
+    - { codigo: 5, rotulo: "Cancelado" }
+
+  status_NFE:
+    - { codigo: 1, rotulo: "Aberto" }
+    - { codigo: 2, rotulo: "Transmitido" }
+    - { codigo: 3, rotulo: "Cancelado" }
+    - { codigo: 4, rotulo: "Scan" }
+    - { codigo: 5, rotulo: "Homologado" }
+    - { codigo: 6, rotulo: "Inutilizado" }
+    - { codigo: 7, rotulo: "Denegada" }
+ 
+  tipo_cartao:
+    - { codigo: 1, rotulo: "Financeiro" }
+    - { codigo: 2, rotulo: "A Liquidadar" }
+    - { codigo: 3, rotulo: "Liquidado" }
+    - { codigo: 4, rotulo: "Estornado" }
+
+  status_instalacao:
+    - { codigo: 1, rotulo: "aberto" }
+    - { codigo: 2, rotulo: "finalizado" }
+    - { codigo: 3, rotulo: "separado" }
+    - { codigo: 4, rotulo: "pendente lib. finan." }
+    - { codigo: 5, rotulo: "em instalacao" }
+    - { codigo: 6, rotulo: "devolvido" }
+    - { codigo: 7, rotulo: "cancelado" }
+
+  tipo_movimentacao_caixa:
+    - { codigo: 1, rotulo: "Abertura" }
+    - { codigo: 2, rotulo: "Fechamento" }
+    - { codigo: 3, rotulo: "Movimento" }
+    - { codigo: 4, rotulo: "Sangria" }
+    - { codigo: 5, rotulo: "Troco" }
+    - { codigo: 6, rotulo: "Credito" }
+    - { codigo: 7, rotulo: "Entrada" }
+
+  status_obra:
+    - { codigo: 1, rotulo: "ABERTO" }
+    - { codigo: 2, rotulo: "FINALIZADO" }
+    - { codigo: 3, rotulo: "CANCELADO" }
+    - { codigo: 4, rotulo: "FECHADO" }
+ 
+  status_projeto:
+    - { codigo: 1, rotulo: "ABERTO/ORcAMENTO" }
+    - { codigo: 2, rotulo: "FINALIZADO" }
+    - { codigo: 3, rotulo: "FECHADO" }
+    - { codigo: 4, rotulo: "CANCELADO" }
+ 
+ 
+

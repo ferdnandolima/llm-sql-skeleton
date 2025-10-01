@@ -1,0 +1,26 @@
+# config/app.yaml
+# Ajuste estes valores conforme seu ambiente.
+servidor:
+  porta: 8080
+  timezone: "America/Sao_Paulo"
+  idioma_padrao: "pt-BR"
+
+limites:
+  timeout_total_ms: 2000          # SLO total: 2s
+  timeout_mysql_ms: 1800          # orçamento de execução SQL
+  max_linhas_resposta: 1000
+  limit_padrao_listagens: 100
+
+pipeline:
+  usar_fallback_llm: true         # fallback só quando templates não cobrem
+  fallback_llm_orcamento_ms: 250  # aborta geração > 250ms
+  rag_top_k: 5                    # quantos trechos de esquema/colunas trazer
+  cache_ttl_seg: 120              # cache de resultados (2 min)
+
+observabilidade:
+  logs_json: true
+  nivel_log: "INFO"
+
+seguranca:
+  rate_limit_por_min: 60
+  cors_origens_permitidas: ["http://localhost:3000"]

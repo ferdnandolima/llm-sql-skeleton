@@ -1,0 +1,454 @@
+# config/datas.yaml (SAFE)
+# Normalização de datas/períodos em PT-BR — America/Sao_Paulo
+# Use aspas SIMPLES nas regex para não escapar \d, \s, etc.
+
+versao: 2
+timezone: "America/Sao_Paulo"
+locale: "pt-BR"
+
+padroes:
+  formatos_entrada:
+    - "dd/MM/yyyy"
+    - "dd/MM/yyyy HH:mm"
+    - "dd/MM"              # assume ano atual
+    - "dd/MM HH:mm"        # assume ano atual
+    - "MM/yyyy"
+    - "yyyy-MM"            # ano-mês ISO
+    - "yyyy-MM-dd"         # ISO
+    - "yyyy-MM-dd HH:mm"
+    - "d 'de' MMMM 'de' yyyy"         # ex: 15 de agosto de 2025
+    - "d 'de' MMMM"                    # assume ano atual
+    - "MMMM 'de' yyyy"                 # ex: agosto de 2025 (mês absoluto)
+    - "Qq/yyyy"                        # ex: Q3/2025 (trimestre absoluto; q=1..4)
+
+  meses_ptbr:
+    janeiro: 1
+    fevereiro: 2
+    marco: 3
+    março: 3
+    abril: 4
+    maio: 5
+    junho: 6
+    julho: 7
+    agosto: 8
+    setembro: 9
+    outubro: 10
+    novembro: 11
+    dezembro: 12
+
+  dias_semana_ptbr:
+    segunda: 1
+    terca: 2
+    terça: 2
+    quarta: 3
+    quinta: 4
+    sexta: 5
+    sabado: 6
+    sábado: 6
+    domingo: 7
+
+  regex:
+    # Absolutos
+    data_absoluta_ptbr: '^(\d{2})/(\d{2})/(\d{4})$'
+    data_absoluta_iso: '^(\d{4})-(\d{2})-(\d{2})$'
+    data_absoluta_iso_hora: '^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})$'
+    mes_ano_num: '^(\d{2})/(\d{4})$'                             # 08/2025
+    ano_mes_iso: '^(\d{4})-(\d{2})$'                             # 2025-08
+    mes_nome_ano: '^(?i)(janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+(\d{4})$'
+    dia_mes_nome_ano: '^(?i)(\d{1,2})\s+de\s+(janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+(\d{4})$'
+
+    # Intervalos
+    intervalo_absoluto_ptbr: '^(\d{2}/\d{2}/\d{4})\s*(a|até|\-|–|—|ao)\s*(\d{2}/\d{2}/\d{4})$'
+    intervalo_absoluto_iso: '^(\d{4}-\d{2}-\d{2})\s*(a|até|\-|–|—|ao)\s*(\d{4}-\d{2}-\d{2})$'
+    intervalo_mes_ano: '^((\d{2}/\d{4})|(\d{4}-\d{2})|(janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+\d{4})\s*(a|até|\-|–|—|ao)\s*((\d{2}/\d{4})|(\d{4}-\d{2})|(janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+\d{4})$'
+
+    # Relativos parametrizados
+    ultimos_n_dias: '^(?i)últim[oa]s?\s+(\d+)\s+dias$'
+    ultimos_n_dias_uteis: '^(?i)últim[oa]s?\s+(\d+)\s+dias\s+úteis$'
+    ultimas_n_horas: '^(?i)últim[oa]s?\s+(\d+)\s+horas$'
+    ultimas_n_semanas: '^(?i)últim[oa]s?\s+(\d+)\s+semanas$'
+    ultimos_n_meses: '^(?i)últim[oa]s?\s+(\d+)\s+meses$'
+
+    # Dias da semana (passada/atual/próxima) — exemplos: "segunda", "sexta passada", "terça da próxima semana"
+    dia_semana_relativo: '^(?i)(segunda|ter[cç]a|quarta|quinta|sexta|s[áa]bado|domingo)(\s+(passad[ao]|anterior|pr[oó]xima|desta\s+semana|da\s+pr[oó]xima\s+semana))?$'
+
+    # Partes do dia
+    hoje_parte_dia: '^(?i)hoje\s+(de\s+manh[ãa]|de\s+tarde|de\s+noite|madrugada)$'
+
+    # Dia único semânticos
+    dia_unico: '^(?i)dia\s+(\d{2}/\d{2}/\d{4})$'
+
+  normalizacao:
+    abrir_inicio_em: "00:00:00"
+    fechar_fim_em: "23:59:59"
+    considerar_dst: true
+    semana_comeca: "monday"      # coerente com ISO-8601
+    incluir_hoje_em_ultimos_n_dias: true
+    calendario_dias_uteis: "BR"  # usa feriados_br
+    tolerar_espacos_extras: true
+
+feriados_br:
+  # Feriados nacionais (fixos) — mês-dia
+  fixos:
+    - "01-01"   # Confraternização Universal
+    - "04-21"   # Tiradentes
+    - "05-01"   # Dia do Trabalho
+    - "09-07"   # Independência do Brasil
+    - "10-12"   # Nossa Senhora Aparecida
+    - "11-02"   # Finados
+    - "11-15"   # Proclamação da República
+    - "12-25"   # Natal
+  # Regras móveis (calculadas a partir da Páscoa):
+  moveis:
+    - "carnaval:-47"     # 47 dias antes da Páscoa (terça-feira)
+    - "sexta_santa:-2"   # Sexta-feira Santa
+    - "corpus_christi:+60"
+    - "pascoa:+0"
+
+periodos:
+  # Básicos
+  hoje:
+    tipo: "relative"
+    inicio: "today 00:00:00"
+    fim: "today 23:59:59"
+
+  ontem:
+    tipo: "relative"
+    inicio: "today-1d 00:00:00"
+    fim: "today-1d 23:59:59"
+
+  anteontem:
+    tipo: "relative"
+    inicio: "today-2d 00:00:00"
+    fim: "today-2d 23:59:59"
+
+  amanha:
+    tipo: "relative"
+    inicio: "today+1d 00:00:00"
+    fim: "today+1d 23:59:59"
+
+  # Janelas comuns
+  ultimos_7_dias:
+    tipo: "relative"
+    inicio: "today-6d 00:00:00"
+    fim: "today 23:59:59"
+
+  ultimos_30_dias:
+    tipo: "relative"
+    inicio: "today-29d 00:00:00"
+    fim: "today 23:59:59"
+
+  ultimos_n_dias:
+    tipo: "relative_parametrico"
+    parametro: "n"
+    descricao: "Inclui hoje e os (n-1) dias anteriores."
+    inicio: "today-(n-1)d 00:00:00"
+    fim: "today 23:59:59"
+
+  ultimos_n_dias_uteis:
+    tipo: "relative_parametrico"
+    parametro: "n"
+    descricao: "Retrocede n dias úteis desconsiderando fins de semana e feriados BR; inclui hoje se for dia útil."
+    inicio: "business_today-(n-1)bd 00:00:00"
+    fim: "business_today 23:59:59"
+
+  ultimas_n_horas:
+    tipo: "relative_parametrico"
+    parametro: "n"
+    descricao: "Janela móvel de n horas até agora."
+    inicio: "now-(n)h"
+    fim: "now"
+
+  # Semanas
+  semana_atual:
+    tipo: "relative"
+    inicio: "monday_of_this_week 00:00:00"
+    fim: "today 23:59:59"
+
+  semana_passada:
+    tipo: "relative"
+    inicio: "monday_of_last_week 00:00:00"
+    fim: "sunday_of_last_week 23:59:59"
+
+  proxima_semana:
+    tipo: "relative"
+    inicio: "monday_of_next_week 00:00:00"
+    fim: "sunday_of_next_week 23:59:59"
+
+  ultimas_n_semanas:
+    tipo: "relative_parametrico"
+    parametro: "n"
+    inicio: "monday_of_this_week-(n-1)w 00:00:00"
+    fim: "sunday_of_this_week 23:59:59"
+
+  semana_iso_atual:
+    tipo: "relative"
+    inicio: "iso_monday_of_this_week 00:00:00"
+    fim: "iso_sunday_of_this_week 23:59:59"
+
+  # Meses
+  mes_atual:
+    tipo: "relative"
+    inicio: "first_day_of_month 00:00:00"
+    fim: "today 23:59:59"
+
+  mes_anterior:
+    tipo: "relative"
+    inicio: "first_day_of_prev_month 00:00:00"
+    fim: "last_day_of_prev_month 23:59:59"
+
+  proximo_mes:
+    tipo: "relative"
+    inicio: "first_day_of_next_month 00:00:00"
+    fim: "last_day_of_next_month 23:59:59"
+
+  ultimos_n_meses:
+    tipo: "relative_parametrico"
+    parametro: "n"
+    inicio: "first_day_of_month-(n-1)M 00:00:00"
+    fim: "last_day_of_month 23:59:59"
+
+  mes_corrente_ate_ontem:
+    tipo: "relative"
+    inicio: "first_day_of_month 00:00:00"
+    fim: "today-1d 23:59:59"
+
+  # Anos
+  ano_atual:
+    tipo: "relative"
+    inicio: "first_day_of_year 00:00:00"
+    fim: "today 23:59:59"
+
+  ano_anterior:
+    tipo: "relative"
+    inicio: "first_day_of_prev_year 00:00:00"
+    fim: "last_day_of_prev_year 23:59:59"
+
+  # Trimestres
+  trimestre_atual:
+    tipo: "relative"
+    inicio: "first_day_of_current_quarter 00:00:00"
+    fim: "today 23:59:59"
+
+  trimestre_anterior:
+    tipo: "relative"
+    inicio: "first_day_of_prev_quarter 00:00:00"
+    fim: "last_day_of_prev_quarter 23:59:59"
+
+  # Partes do dia (hoje)
+  hoje_manha:
+    tipo: "relative"
+    inicio: "today 05:00:00"
+    fim: "today 11:59:59"
+
+  hoje_tarde:
+    tipo: "relative"
+    inicio: "today 12:00:00"
+    fim: "today 17:59:59"
+
+  hoje_noite:
+    tipo: "relative"
+    inicio: "today 18:00:00"
+    fim: "today 23:59:59"
+
+  hoje_madrugada:
+    tipo: "relative"
+    inicio: "today 00:00:00"
+    fim: "today 04:59:59"
+
+  # Dias úteis / último dia útil
+  ultimo_dia_util:
+    tipo: "business"
+    inicio: "last_business_day 00:00:00"
+    fim: "last_business_day 23:59:59"
+
+  # Absolutos
+  dia_absoluto_ptbr:
+    tipo: "absolute_day"
+    pattern_ref: "padroes.regex.data_absoluta_ptbr"
+    inclusivo: true
+
+  dia_absoluto_iso:
+    tipo: "absolute_day"
+    pattern_ref: "padroes.regex.data_absoluta_iso"
+    inclusivo: true
+
+  intervalo_absoluto_ptbr:
+    tipo: "absolute_interval"
+    pattern_ref: "padroes.regex.intervalo_absoluto_ptbr"
+    inclusivo: true
+
+  intervalo_absoluto_iso:
+    tipo: "absolute_interval"
+    pattern_ref: "padroes.regex.intervalo_absoluto_iso"
+    inclusivo: true
+
+  mes_absoluto_num:
+    tipo: "absolute_month"
+    pattern_ref: "padroes.regex.mes_ano_num"
+    inclusivo: true
+
+  mes_absoluto_iso:
+    tipo: "absolute_month"
+    pattern_ref: "padroes.regex.ano_mes_iso"
+    inclusivo: true
+
+  mes_absoluto_nome:
+    tipo: "absolute_month_name"
+    pattern_ref: "padroes.regex.mes_nome_ano"
+    inclusivo: true
+
+  dia_mes_nome_ano:
+    tipo: "absolute_day_name"
+    pattern_ref: "padroes.regex.dia_mes_nome_ano"
+    inclusivo: true
+
+  trimestre_absoluto:
+    tipo: "absolute_quarter"
+    pattern: '^Q([1-4])/(\d{4})$'
+    inclusivo: true
+
+  # Dia da semana relativo (ex.: "sexta passada", "terça da próxima semana", "quinta")
+  dia_semana_relativo:
+    tipo: "weekday_relative"
+    pattern_ref: "padroes.regex.dia_semana_relativo"
+    notas: "Se não houver qualificador, assume desta semana (passado ou próximo conforme hoje)."
+
+  # Hoje + parte do dia (ex.: "hoje de manhã")
+  hoje_parte_dia:
+    tipo: "today_part_of_day"
+    pattern_ref: "padroes.regex.hoje_parte_dia"
+
+aliases:
+  # Básicos
+  - termos: ["hoje","no dia de hoje","neste dia"]
+    periodo: "hoje"
+  - termos: ["ontem"]
+    periodo: "ontem"
+  - termos: ["anteontem"]
+    periodo: "anteontem"
+  - termos: ["amanhã","amanha"]
+    periodo: "amanha"
+
+  # Últimos N
+  - termos: ["últimos 7 dias","ultimos 7 dias"]
+    periodo: "ultimos_7_dias"
+  - termos: ["últimos 30 dias","ultimos 30 dias"]
+    periodo: "ultimos_30_dias"
+  - termos: ["últimos n dias","ultimos n dias"]
+    periodo: "ultimos_n_dias"
+  - termos: ["últimas n horas","ultimas n horas"]
+    periodo: "ultimas_n_horas"
+  - termos: ["últimas n semanas","ultimas n semanas"]
+    periodo: "ultimas_n_semanas"
+  - termos: ["últimos n meses","ultimos n meses"]
+    periodo: "ultimos_n_meses"
+  - termos: ["últimos n dias úteis","ultimos n dias uteis","últimos n dias uteis"]
+    periodo: "ultimos_n_dias_uteis"
+
+  # Semanas
+  - termos: ["semana atual"]
+    periodo: "semana_atual"
+  - termos: ["semana passada","ultima semana","última semana"]
+    periodo: "semana_passada"
+  - termos: ["próxima semana","proxima semana"]
+    periodo: "proxima_semana"
+  - termos: ["semana ISO atual","semana iso atual"]
+    periodo: "semana_iso_atual"
+
+  # Meses
+  - termos: ["mês atual","mes atual","neste mês","este mês","esse mês"]
+    periodo: "mes_atual"
+  - termos: ["mês anterior","mes anterior","último mês","ultimo mês","ultimo mes"]
+    periodo: "mes_anterior"
+  - termos: ["próximo mês","proximo mes","próximo mes"]
+    periodo: "proximo_mes"
+  - termos: ["mês corrente até ontem","mes corrente ate ontem"]
+    periodo: "mes_corrente_ate_ontem"
+
+  # Anos/Trimestres
+  - termos: ["ano atual","este ano"]
+    periodo: "ano_atual"
+  - termos: ["ano anterior","último ano","ultimo ano"]
+    periodo: "ano_anterior"
+  - termos: ["trimestre atual"]
+    periodo: "trimestre_atual"
+  - termos: ["trimestre anterior"]
+    periodo: "trimestre_anterior"
+
+  # Partes do dia
+  - termos: ["hoje de manhã","hoje de manha"]
+    periodo: "hoje_manha"
+  - termos: ["hoje à tarde","hoje a tarde"]
+    periodo: "hoje_tarde"
+  - termos: ["hoje à noite","hoje a noite"]
+    periodo: "hoje_noite"
+  - termos: ["hoje de madrugada"]
+    periodo: "hoje_madrugada"
+
+  # Dias úteis / dia útil
+  - termos: ["último dia útil","ultimo dia util"]
+    periodo: "ultimo_dia_util"
+
+  # Modos absolutos por nome/ISO
+  - termos: ["intervalo dd/mm/yyyy a dd/mm/yyyy"]
+    periodo: "intervalo_absoluto_ptbr"
+  - termos: ["intervalo yyyy-mm-dd a yyyy-mm-dd"]
+    periodo: "intervalo_absoluto_iso"
+  - termos: ["mês absoluto 08/2025","mes absoluto 08/2025"]
+    periodo: "mes_absoluto_num"
+  - termos: ["mês absoluto 2025-08","mes absoluto 2025-08"]
+    periodo: "mes_absoluto_iso"
+  - termos: ["mês absoluto por nome","mes absoluto por nome"]
+    periodo: "mes_absoluto_nome"
+  - termos: ["dia absoluto nomeado"]
+    periodo: "dia_mes_nome_ano"
+  - termos: ["trimestre absoluto"]
+    periodo: "trimestre_absoluto"
+
+exemplos_teste:
+  - entrada: "Quantos pedidos ontem?"
+    esperado:
+      periodo: "ontem"
+
+  - entrada: "Total no mês atual faturado"
+    esperado:
+      periodo: "mes_atual"
+
+  - entrada: "Pedidos nos últimos 30 dias"
+    esperado:
+      periodo: "ultimos_30_dias"
+
+  - entrada: "Pedidos nos últimos 5 dias úteis"
+    esperado:
+      periodo: "ultimos_n_dias_uteis"
+      parametros: {"n": 5}
+
+  - entrada: "Pedidos entre 01/08/2025 e 15/08/2025"
+    esperado:
+      periodo: "intervalo_absoluto_ptbr"
+
+  - entrada: "Faturamento em agosto de 2025"
+    esperado:
+      periodo: "mes_absoluto_nome"
+
+  - entrada: "Consulta na semana passada"
+    esperado:
+      periodo: "semana_passada"
+
+  - entrada: "Notas emitidas hoje de manhã"
+    esperado:
+      periodo: "hoje_manha"
+
+  - entrada: "Pedidos em Q3/2025"
+    esperado:
+      periodo: "trimestre_absoluto"
+
+  - entrada: "Vendas nas últimas 6 horas"
+    esperado:
+      periodo: "ultimas_n_horas"
+      parametros: {"n": 6}
+
+  - entrada: "Entregas da próxima semana"
+    esperado:
+      periodo: "proxima_semana"

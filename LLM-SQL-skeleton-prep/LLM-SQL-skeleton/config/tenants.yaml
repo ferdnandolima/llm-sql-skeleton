@@ -1,0 +1,18 @@
+# config/tenants.yaml
+# Defina 1+ tenants (clientes) com suas credenciais de leitura e caminhos de artefatos.
+tenants:
+  exemplo_local:
+    dsn: "mysql://root:G3n3515Pl3nu5@192.168.6.50:3306/bdalagoastemp_2608"
+    read_replica: null                      # ex.: "mysql://usuario_ro:***@replica:3306/SEU_SCHEMA"
+    ip_allowlist: ["127.0.0.1/32"]
+    catalogo_path: "C:/LLM-SQL/data/catalogo.json"
+    glossario_path: "C:/LLM-SQL/data/glossario.csv"
+    regras_sql_path: "C:/LLM-SQL/data/regras_sql.yaml"
+
+  # empresa_sp:
+  #   dsn: "mysql://usuario_ro:***@host_sp:3306/erp_sp"
+  #   read_replica: "mysql://usuario_ro:***@replica_sp:3306/erp_sp"
+  #   ip_allowlist: ["200.200.200.0/24"]
+  #   catalogo_path: "C:/LLM-SQL/data/catalogo.json"
+  #   glossario_path: "C:/LLM-SQL/data/glossario.csv"
+  #   regras_sql_path: "C:/LLM-SQL/data/regras_sql.yaml"
