@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual env
+.venv/
+
+# Segredos
+.env
+.env.*        # ignora .env.local etc.
+!.env.example # re-inclui o exemplo
+
+# Logs e temporários
+*.log
+logs/
+tmp/
+*.tmp
+*.bak
+
+# Caches de ferramentas
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.cache/
+.coverage
+coverage.xml
+
+# DBs locais (dev)
+*.sqlite
+*.sqlite3
+*.db
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Artefatos
+*.zip
+dist/
+build/
