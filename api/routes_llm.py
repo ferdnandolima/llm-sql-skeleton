@@ -1,4 +1,3 @@
-# api/routes_llm.py
 from fastapi import APIRouter, Body, HTTPException, Query, Request
 from typing import Dict, Any, Tuple, List, Optional
 from datetime import datetime, date, timedelta
@@ -198,6 +197,79 @@ def _slots_from_plan(plan: QueryPlan, spec: dict) -> Dict[str, Any]:
         slots["N"] = int(plan.limit)
 
     return slots
+
+# >>> NOVO: aplicar período vindo do Router para gerar data_ini/data_fim (com precisão)
+def _apply_router_period_to_slots(slots: Dict[str, Any]) -> None:
+    """
+    Converte slots vindos do Router (ex.: periodo='ultimas_n_horas', parametros_periodo={'n': 24})
+    em data_ini/data_fim (strings). NÃO faz nada se já houver data_ini/data_fim.
+    """
+    if slots.get("data_ini") and slots.get("data_fim"):
+        return
+    p = str(slots.get("periodo") or "").strip().lower()
+    if not p:
+        return
+    pp = slots.get("parametros_periodo") or {}
+    now = datetime.now()
+
+    def set_range(di, df, keep_time=False):
+        """
+        di/df: datetime ou date; se keep_time=True, usa HH:MM:SS; caso contrário, 00:00:00/23:59:59.
+        """
+        if isinstance(di, datetime):
+            di_dt = di
+        else:
+            di_dt = datetime(di.year, di.month, di.day, 0, 0, 0)
+        if isinstance(df, datetime):
+            df_dt = df
+        else:
+            df_dt = datetime(df.year, df.month, df.day, 23, 59, 59)
+        if keep_time:
+            slots["data_ini"] = di_dt.strftime("%Y-%m-%d %H:%M:%S")
+            slots["data_fim"] = df_dt.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            slots["data_ini"] = di_dt.strftime("%Y-%m-%d 00:00:00")
+            slots["data_fim"] = df_dt.strftime("%Y-%m-%d 23:59:59")
+
+    # janelas relativas com precisão de hora/minuto
+    if p == "ultimas_n_horas":
+        n = int(pp.get("n", 0) or 0)
+        if n > 0:
+            set_range(now - timedelta(hours=n), now, keep_time=True)
+        return
+    if p == "ultimos_n_minutos":
+        n = int(pp.get("n", 0) or 0)
+        if n > 0:
+            set_range(now - timedelta(minutes=n), now, keep_time=True)
+        return
+    if p == "ultimos_n_dias":
+        n = int(pp.get("n", 0) or 0)
+        if n > 0:
+            set_range(now - timedelta(days=n), now, keep_time=True)
+        return
+
+    # chaves diárias (semana/mês/ano), aceitando variações com/sem underscore
+    t = p.replace("_", " ")
+    today = _today()
+    if t == "hoje":
+        set_range(today, today, keep_time=False); return
+    if t == "ontem":
+        y = today - timedelta(days=1); set_range(y, y, keep_time=False); return
+    if t == "anteontem":
+        y2 = today - timedelta(days=2); set_range(y2, y2, keep_time=False); return
+    if t == "semana atual":
+        di = _monday_of(today); df = di + timedelta(days=6); set_range(di, df, keep_time=False); return
+    if t == "semana passada":
+        fim = _monday_of(today) - timedelta(days=1); di = fim - timedelta(days=6); set_range(di, fim, keep_time=False); return
+    if t == "mes atual":
+        di = _first_day_of_month(today); df = _last_day_of_month(today); set_range(di, df, keep_time=False); return
+    if t == "mes anterior":
+        first_this = _first_day_of_month(today); last_prev = first_this - timedelta(days=1)
+        di = _first_day_of_month(last_prev); df = _last_day_of_month(last_prev); set_range(di, df, keep_time=False); return
+    if t == "ano atual":
+        di = date(today.year, 1, 1); df = date(today.year, 12, 31); set_range(di, df, keep_time=False); return
+    if t == "ano anterior":
+        di = date(today.year - 1, 1, 1); df = date(today.year - 1, 12, 31); set_range(di, df, keep_time=False); return
 
 # ---------- Cap global de LIMIT (cosmético p/ SQL mostrado/executado) ----------
 
@@ -622,10 +694,17 @@ def build_sql(
     di = slots.get("data_ini")
     df = slots.get("data_fim")
     if periodo_col and di and df:
-        di_dt = _date_from_iso(str(di))
-        df_dt = _date_from_iso(str(df))
+        di_raw = str(di)
+        df_raw = str(df)
+        di_dt = _date_from_iso(di_raw)
+        df_dt = _date_from_iso(df_raw)
+        # Se já veio com HH:MM (precisão), preserva; senão, usa 00:00/23:59
+        has_time_start = bool(re.search(r"\d{2}:\d{2}", di_raw))
+        has_time_end   = bool(re.search(r"\d{2}:\d{2}", df_raw))
+        start_param = di_raw[:19] if has_time_start else f"{di_dt.strftime('%Y-%m-%d')} 00:00:00"
+        end_param   = df_raw[:19] if has_time_end   else f"{df_dt.strftime('%Y-%m-%d')} 23:59:59"
         where.append(f"{_qual(alias, periodo_col)} BETWEEN %s AND %s")
-        params.extend([di_dt.strftime("%Y-%m-%d 00:00:00"), df_dt.strftime("%Y-%m-%d 23:59:59")])
+        params.extend([start_param, end_param])
 
     status_col = _col(spec, "status") or ("ID_STATUS" if "ID_STATUS" in (cols_map.values()) else None)
     if slots.get("status") and status_col:
@@ -821,6 +900,9 @@ def llm_run(
     overrides = (payload or {}).get("override_slots") or {}
     for k, v in overrides.items():
         slots[k] = v
+
+    # >>> NOVO: quando vier 'periodo' do Router, gerar data_ini/data_fim aqui (com precisão)
+    _apply_router_period_to_slots(slots)
 
     # >>> detectar pedido de "todos" e marcar flag de controle
     regras = spec.get("regras") or {}
@@ -1182,4 +1264,3 @@ def llm_consulta(
             sql_digest=sql_digest(sql),
         )
         raise HTTPException(500, f"Falha ao executar SQL: {e}")
-

@@ -1,4 +1,4 @@
-namespace: clientes
+namespace: cliente
 
 listar_clientes:
   enabled: true

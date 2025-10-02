@@ -8,22 +8,19 @@ RESERVED_KEYS = {
 _macro_pat = re.compile(r"\{\{\s*([a-zA-Z0-9_\.]+)\s*\}\}")
 
 def _resolve_macros(obj, ctx):
+    # Resolve apenas macros conhecidas no contexto.
+    # Placeholders de runtime (ex.: {{cliente}}) ficam INTACTOS.
     if isinstance(obj, dict):
         return {k: _resolve_macros(v, ctx) for k, v in obj.items()}
     if isinstance(obj, list):
         return [_resolve_macros(v, ctx) for v in obj]
     if isinstance(obj, str):
         def repl(m):
-            path = m.group(1).split(".")
-            cur = ctx
-            for p in path:
-                if isinstance(cur, dict) and p in cur:
-                    cur = cur[p]
-                else:
-                    raise KeyError("Macro {{%s}} não encontrada no contexto" % m.group(1))
-            if not isinstance(cur, (str, int, float)):
-                return str(cur)
-            return str(cur)
+            key = m.group(1).strip()
+            if key in ctx:
+                return str(ctx[key])
+            # macro desconhecida => mantém como está (não quebra intents)
+            return m.group(0)
         return _macro_pat.sub(repl, obj)
     return obj
 

@@ -1,8 +1,8 @@
-# config/dominios/status.yaml
+# config/status.yaml
 versao: 1
 fonte: "Status.xlsx (usuario)"
 
-dominios:
+status:
   pedido_venda:
     - { codigo: 0, rotulo: "Orcamento" }
     - { codigo: 1, rotulo: "Aberto" }
@@ -84,7 +84,7 @@ dominios:
  
   tipo_cartao:
     - { codigo: 1, rotulo: "Financeiro" }
-    - { codigo: 2, rotulo: "A Liquidadar" }
+    - { codigo: 2, rotulo: "A Liquidar" }
     - { codigo: 3, rotulo: "Liquidado" }
     - { codigo: 4, rotulo: "Estornado" }
 
